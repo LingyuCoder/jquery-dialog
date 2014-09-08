@@ -1,4 +1,5 @@
-jQuery(function(){
+(function($){
+	'use strict';
 	var defaultConfig = {
 		title: '',
 		footer: '',
@@ -22,7 +23,6 @@ jQuery(function(){
 		maximize: function(){}
 	};
 
-	var $ = jQuery;
 	var commands = {};
 	var $win = $(window);
 
@@ -139,4 +139,4 @@ jQuery(function(){
 		});
 		return self;
 	};
-});
+})(jQuery);
