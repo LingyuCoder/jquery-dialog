@@ -1,4 +1,15 @@
-(function($){
+(function(factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define('jquery-dialog', ['jquery-widget'], factory);
+	} else if (typeof exports === 'object') {
+		// Node/CommonJS
+		factory(require('jquery'));
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function($) {
 	'use strict';
 	var defaultConfig = {
 		title: '',
@@ -19,29 +30,29 @@
 			topMinify: 'wd-ui-tp-min',
 			topMaxify: 'wd-ui-tp-max'
 		},
-		minimize: function(){},
-		maximize: function(){}
+		minimize: function() {},
+		maximize: function() {}
 	};
 
 	var commands = {};
 	var $win = $(window);
 
-	commands.close = function($ele){
+	commands.close = function($ele) {
 		var $widget = $ele.data('dlg_data').widget;
 		$widget.close();
 	};
 
-	commands.open = function($ele){
+	commands.open = function($ele) {
 		var $widget = $ele.data('dlg_data').widget;
 		$widget.open();
 	};
 
-	commands.minify = function($ele, minify){
+	commands.minify = function($ele, minify) {
 		var $widget = $ele.data('dlg_data').widget;
-		if(minify === 'true'){
+		if (minify === 'true') {
 			$widget.find('.wd-ctn').hide();
 			$widget.find('.wd-ft').hide();
-		} else if(minify === 'false'){
+		} else if (minify === 'false') {
 			$widget.find('.wd-ctn').show();
 			$widget.find('.wd-ft').show();
 		} else {
@@ -50,11 +61,11 @@
 		}
 	};
 
-	commands.maxify = function($ele, maxify){
+	commands.maxify = function($ele, maxify) {
 		var data = $ele.data('dlg_data');
 		var $widget = data.widget;
 		console.log(data, maxify);
-		if(maxify === true){
+		if (maxify === true) {
 			data.originSize = {
 				width: $widget.width(),
 				height: $widget.height()
@@ -64,7 +75,7 @@
 			$widget.align({
 				base: 'screen'
 			});
-		} else if(maxify === false){
+		} else if (maxify === false) {
 			$widget.width(data.originSize.width);
 			$widget.height(data.originSize.height);
 			delete data.originSize;
@@ -72,7 +83,7 @@
 				base: 'screen'
 			});
 		} else {
-			if(data.originSize) {
+			if (data.originSize) {
 				commands.maxify($ele, false);
 			} else {
 				commands.maxify($ele, true);
@@ -81,7 +92,7 @@
 	};
 
 	function runCommand($elements, command, commandParam) {
-		$.each($elements, function(index, $ele){
+		$.each($elements, function(index, $ele) {
 			commands[command]($ele, commandParam);
 		});
 	}
@@ -91,15 +102,15 @@
 		var config = data.config;
 		var css = config.css;
 		var $tt = $('<div class="wd-tt-ctn"><div class="wd-tt-text">' + (config.title || '') + '<div></div>');
-		if(config.closeable || config.minify || config.maxify) {
+		if (config.closeable || config.minify || config.maxify) {
 			var $tp = $('<div></div>');
-			if(config.closeable) {
+			if (config.closeable) {
 				$tp.append('<button class="wd-tp-op wd-tp-close ' + css.topClose + '">&#xe603;</button>');
 			}
-			if(config.maxify) {
+			if (config.maxify) {
 				$tp.append('<button class="wd-tp-op wd-tp-max ' + css.topMaxify + '">&#xe601;</button>');
 			}
-			if(config.minify) {
+			if (config.minify) {
 				$tp.append('<button class="wd-tp-op wd-tp-min ' + css.topMinify + '">&#xe604;</button>');
 			}
 			$tt.prepend($tp);
@@ -108,28 +119,28 @@
 		config.closeable = false;
 		var $widget = $.widget(config);
 		data.widget = $widget;
-		$widget.delegate('.wd-tp-close', 'click', function(event){
+		$widget.delegate('.wd-tp-close', 'click', function(event) {
 			event.stopPropagation();
 			commands.close($element);
 		});
-		$widget.delegate('.wd-tp-min', 'click', function(event){
+		$widget.delegate('.wd-tp-min', 'click', function(event) {
 			event.stopPropagation();
 			commands.minify($element);
 		});
-		$widget.delegate('.wd-tp-max', 'click', function(event){
+		$widget.delegate('.wd-tp-max', 'click', function(event) {
 			event.stopPropagation();
 			commands.maxify($element);
 		});
 	}
 
-	$.fn.dialog = function(config, commandParam){
+	$.fn.dialog = function(config, commandParam) {
 		var self = this;
-		if(typeof config === 'string') {
+		if (typeof config === 'string') {
 			runCommand(self, config, commandParam);
 			return;
 		}
 		config = $.extend(true, {}, defaultConfig, config);
-		$.each(self, function(index, $content){
+		$.each(self, function(index, $content) {
 			$content = $($content);
 			config.content = $content;
 			$content.data('dlg_data', {
@@ -139,4 +150,4 @@
 		});
 		return self;
 	};
-})(jQuery);
+}));
